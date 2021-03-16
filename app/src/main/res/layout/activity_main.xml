@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
-    android:name="org.d3if4129.hitungbmi2.ui.HitungFragment"
+    android:name="org.d3if4129.hitungbmi2.ui.SaranFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
