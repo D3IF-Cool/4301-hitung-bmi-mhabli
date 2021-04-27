@@ -19,7 +19,7 @@ import org.d3if4129.hitungbmi2.db.BmiEntity
 
     private val navigasi = MutableLiveData<KategoriBMI?>()
 
-    val data = db.getLastBmi()
+//    val data = db.getLastBmi()
 
     fun hitungBmi(berat: String, tinggi: String, isMale: Boolean) {
         val tinggiCm = tinggi.toFloat() / 100
