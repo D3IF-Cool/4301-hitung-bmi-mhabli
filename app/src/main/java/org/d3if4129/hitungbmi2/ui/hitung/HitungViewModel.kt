@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.d3if4129.hitungbmi2.data.HasilBmi
+import org.d3if4129.hitungbmi2.data.HitungBmi
 import org.d3if4129.hitungbmi2.data.KategoriBMI
 import org.d3if4129.hitungbmi2.db.BmiDao
 import org.d3if4129.hitungbmi2.db.BmiEntity
@@ -22,31 +23,37 @@ import org.d3if4129.hitungbmi2.db.BmiEntity
 //    val data = db.getLastBmi()
 
     fun hitungBmi(berat: String, tinggi: String, isMale: Boolean) {
-        val tinggiCm = tinggi.toFloat() / 100
-        val bmi = berat.toFloat() / (tinggiCm * tinggiCm)
-        val kategori = if (isMale) {
-            when {
-                bmi < 20.5 -> KategoriBMI.KURUS
-                bmi >= 27.0 -> KategoriBMI.GEMUK
-                else -> KategoriBMI.IDEAL
-            }
-        }
-        else {
-            when {
-                bmi < 18.5 -> KategoriBMI.KURUS
-                bmi >= 25.0 -> KategoriBMI.GEMUK
-                else -> KategoriBMI.IDEAL
-            }
-        }
-        hasilBmi.value = HasilBmi(bmi, kategori)
+//        val tinggiCm = tinggi.toFloat() / 100
+//        val bmi = berat.toFloat() / (tinggiCm * tinggiCm)
+//        val kategori = if (isMale) {
+//            when {
+//                bmi < 20.5 -> KategoriBMI.KURUS
+//                bmi >= 27.0 -> KategoriBMI.GEMUK
+//                else -> KategoriBMI.IDEAL
+//            }
+//        }
+//        else {
+//            when {
+//                bmi < 18.5 -> KategoriBMI.KURUS
+//                bmi >= 25.0 -> KategoriBMI.GEMUK
+//                else -> KategoriBMI.IDEAL
+//            }
+//        }
+//        hasilBmi.value = HasilBmi(bmi, kategori)
+        val dataBmi = BmiEntity(
+            berat = berat.toFloat(),
+            tinggi = tinggi.toFloat(),
+            isMale = isMale
+        )
+        hasilBmi.value = HitungBmi.hitung(dataBmi)
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val dataBmi = BmiEntity(
-                    berat = berat.toFloat(),
-                    tinggi = tinggi.toFloat(),
-                    isMale = isMale
-                )
+//                val dataBmi = BmiEntity(
+//                    berat = berat.toFloat(),
+//                    tinggi = tinggi.toFloat(),
+//                    isMale = isMale
+//                )
                 db.insert(dataBmi)
             }
         }
