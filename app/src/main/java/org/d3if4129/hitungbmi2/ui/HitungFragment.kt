@@ -6,6 +6,8 @@ import android.text.TextUtils
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import org.d3if4129.hitungbmi2.R
@@ -14,6 +16,7 @@ import org.d3if4129.hitungbmi2.databinding.FragmentHitungBinding
 
 class HitungFragment : Fragment() {
 
+    private val viewModel: HitungViewModel by viewModels()
     private lateinit var binding: FragmentHitungBinding
     private lateinit var kategoriBmi: KategoriBMI
 
@@ -46,6 +49,18 @@ class HitungFragment : Fragment() {
         setHasOptionsMenu(true)
         return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getHasilBmi().observe(viewLifecycleOwner, {
+            if (it == null) return@observe
+            binding.bmiTextView.text = getString(R.string.bmi_x, it.bmi)
+            binding.kategoriTextView.text = getString(R.string.kategori_x,
+                    getKategori(it.kategori))
+            binding.buttonGroup.visibility = View.VISIBLE
+        })
+    }
+
     private fun hitungBmi() {
 
         val berat = binding.beratEditText.text.toString()
@@ -58,23 +73,26 @@ class HitungFragment : Fragment() {
             Toast.makeText(context, R.string.tinggi_invalid, Toast.LENGTH_LONG).show()
             return
         }
-        val tinggiCm = tinggi.toFloat() / 100
+//        val tinggiCm = tinggi.toFloat() / 100
 
         val selectedId = binding.radioGroup.checkedRadioButtonId
         if (selectedId == -1) {
             Toast.makeText(context, R.string.gender_invalid, Toast.LENGTH_LONG).show()
             return
         }
+
         val isMale = selectedId == R.id.priaRadioButton
-        val bmi = berat.toFloat() / (tinggiCm * tinggiCm)
-        val kategori = getKategori(bmi, isMale)
 
+        viewModel.hitungBmi(berat, tinggi, isMale)
 
-        binding.bmiTextView.text = getString(R.string.bmi_x, bmi)
-        binding.kategoriTextView.text = getString(R.string.kategori_x, kategori)
-        binding.buttonGroup.visibility = View.VISIBLE
+//        val bmi = berat.toFloat() / (tinggiCm * tinggiCm)
+//        val kategori = getKategori(bmi, isMale)
+//
+//
+//        binding.bmiTextView.text = getString(R.string.bmi_x, bmi)
+//        binding.kategoriTextView.text = getString(R.string.kategori_x, kategori)
+//        binding.buttonGroup.visibility = View.VISIBLE
 //      binding.saranButton.visibility = View.VISIBLE
-
     }
 
     private fun shareData() {
@@ -98,21 +116,23 @@ class HitungFragment : Fragment() {
         }
     }
 
-    private fun getKategori(bmi: Float, isMale: Boolean): String {
-        kategoriBmi = if (isMale) {
-            when {
-                bmi < 20.5 -> KategoriBMI.KURUS
-                bmi >= 27.0 -> KategoriBMI.GEMUK
-                else -> KategoriBMI.IDEAL
-            }
-        } else {
-            when {
-                bmi < 18.5 -> KategoriBMI.KURUS
-                bmi >= 25.0 -> KategoriBMI.GEMUK
-                else -> KategoriBMI.IDEAL
-            }
-        }
-        val stringRes = when (kategoriBmi) {
+//    private fun getKategori(bmi: Float, isMale: Boolean): String {
+    private fun getKategori(kategori: KategoriBMI): String {
+//    kategoriBmi = if (isMale) {
+//            when {
+//                bmi < 20.5 -> KategoriBMI.KURUS
+//                bmi >= 27.0 -> KategoriBMI.GEMUK
+//                else -> KategoriBMI.IDEAL
+//            }
+//        } else {
+//            when {
+//                bmi < 18.5 -> KategoriBMI.KURUS
+//                bmi >= 25.0 -> KategoriBMI.GEMUK
+//                else -> KategoriBMI.IDEAL
+//            }
+//        }
+//        val stringRes = when (kategoriBmi) {
+        val stringRes = when (kategori) {
             KategoriBMI.KURUS -> R.string.kurus
             KategoriBMI.IDEAL -> R.string.ideal
             KategoriBMI.GEMUK -> R.string.gemuk
